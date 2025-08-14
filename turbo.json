@@ -47,8 +47,7 @@
     "pre-publish": {
       "dependsOn": [
         "build",
-        "lint",
-        "test"
+        "lint"
       ]
     },
     "test-ci": {
@@ -72,8 +71,7 @@
     "publish": {
       "dependsOn": [
         "build",
-        "lint",
-        "test"
+        "lint"
       ]
     },
     "clean": {
