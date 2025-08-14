@@ -1,0 +1,24 @@
+version: 2
+updates:
+  - commit-message:
+      prefix: chore
+    directory: /
+    open-pull-requests-limit: 20
+    package-ecosystem: npm
+    schedule:
+      interval: monthly
+    groups:
+      development-dependencies:
+        dependency-type: development
+      production-dependencies:
+        dependency-type: production
+        exclude-patterns:
+          - '@emotion*'
+          - '@mui*'
+      mui:
+        patterns:
+          - '@emotion*'
+          - '@mui*'
+    ignore:
+      - dependency-name: '@northern.tech*'
+    versioning-strategy: increase

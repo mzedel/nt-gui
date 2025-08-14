@@ -1,0 +1,55 @@
+{
+  "name": "@northern.tech/testing",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "exports": {
+    "./baseTestConfig.json": "./dist/baseTestConfig.json",
+    "./**/*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "dist/baseTestConfig.json"
+  ],
+  "scripts": {
+    "build": "tsup --publicDir",
+    "lint": "eslint src/**/*.ts src/*.ts *.ts",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "devDependencies": {
+    "@northern.tech/eslint-config": "*",
+    "@northern.tech/typescript-config": "*",
+    "eslint": "^9.27.0",
+    "tsup": "8.5.0"
+  },
+  "dependencies": {
+    "@emotion/jest": "^11.x",
+    "@mui/material": "^7.x",
+    "@northern.tech/utils": "*",
+    "@reduxjs/toolkit": "^2.x",
+    "@testing-library/react": "^16.x",
+    "msw": "^2.x",
+    "react-redux": "^9.x",
+    "react-router-dom": "^7.x",
+    "vitest": "^3.x"
+  }
+}

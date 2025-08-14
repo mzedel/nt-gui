@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Default",
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "checkJs": false,
+    "composite": false,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "bundler"
+  },
+  "include": [
+    "${configDir}/**/*.cjs",
+    "${configDir}/**/*.js",
+    "${configDir}/**/*.mjs",
+    "${configDir}/**/*.ts",
+    "${configDir}/**/*.tsx",
+    "${configDir}/*.js",
+    "${configDir}/*.ts",
+    "${configDir}/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".nyc_output",
+    "coverage",
+    "jest-coverage"
+  ]
+}

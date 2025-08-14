@@ -1,0 +1,287 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Auditlogs Component > renders correctly 1`] = `
+"<div>
+  <div
+    class="fadeIn deploy-table-contain auditlogs-list css-1yc7te8-auditlogsList"
+  >
+    <div
+      class="auditlogs-list-item auditlogs-list-item-header muted"
+    >
+      <div
+        class="columnHeader"
+        style="cursor: initial;"
+      >
+        Performed by
+      </div>
+      <div
+        class="columnHeader"
+        style="cursor: initial;"
+      >
+        Action
+      </div>
+      <div
+        class="columnHeader"
+        style="cursor: initial;"
+      >
+        Type
+      </div>
+      <div
+        class="columnHeader"
+        style="cursor: initial;"
+      >
+        Changed
+      </div>
+      <div
+        class="columnHeader"
+        style="cursor: initial;"
+      >
+        More details
+      </div>
+      <div
+        class="columnHeader"
+      >
+        Time
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium sortIcon selected false css-1umw9bq-MuiSvgIcon-root"
+          data-testid="SortIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 18h6v-2H3zM3 6v2h18V6zm0 7h12v-2H3z"
+          />
+        </svg>
+      </div>
+      <div />
+    </div>
+    <div
+      class="auditlogs-list"
+    >
+      <div
+        class="auditlogs-list-item "
+      >
+        <div>
+          string@example.com
+        </div>
+        <div
+          class="uppercased"
+        >
+          create
+        </div>
+        <div
+          class="capitalized"
+        >
+          user
+        </div>
+        <div>
+          user@acme.com
+        </div>
+        <div
+          class="text-overflow"
+        >
+          change1
+        </div>
+        <time
+          datetime="2019-01-01T12:10:22+00:00"
+        >
+          2019-01-01 12:10
+        </time>
+        <div />
+      </div>
+      <div
+        class="auditlogs-list-item "
+      >
+        <div>
+          string
+        </div>
+        <div
+          class="uppercased"
+        >
+          create
+        </div>
+        <div
+          class="capitalized"
+        >
+          deployment
+        </div>
+        <div>
+          production
+        </div>
+        <a
+          data-discover="true"
+          href="/deployments/finished?open=true&id=string"
+        >
+          View deployment
+        </a>
+        <time
+          datetime="2019-01-01T12:16:22+00:00"
+        >
+          2019-01-01 12:16
+        </time>
+        <div />
+      </div>
+      <div
+        class="auditlogs-list-item "
+      >
+        <div>
+          string@example.com
+        </div>
+        <div
+          class="uppercased"
+        >
+          open_terminal
+        </div>
+        <div
+          class="capitalized"
+        >
+          device
+        </div>
+        <div
+          class="css-z9m6tn-container"
+          style="display: grid;"
+        >
+          <div>
+            a1
+          </div>
+        </div>
+        <a>
+          View session log
+        </a>
+        <time
+          datetime="2019-01-01T12:10:22+00:00"
+        >
+          2019-01-01 12:10
+        </time>
+        <div />
+      </div>
+    </div>
+    <div
+      class="flexbox margin-top"
+    >
+      <div
+        class="MuiTablePagination-root flexbox margin-top margin-top-none css-7mt0f-MuiTablePagination-root"
+      >
+        <div
+          class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular MuiTablePagination-toolbar css-1gak8h1-MuiToolbar-root-MuiTablePagination-toolbar"
+        >
+          <div
+            class="MuiTablePagination-spacer flexbox no-basis css-1wtxofq-MuiTablePagination-spacer"
+          />
+          <p
+            class="MuiTablePagination-selectLabel css-s09cke-MuiTablePagination-selectLabel"
+            id="«r2»"
+          >
+            Rows
+          </p>
+          <div
+            class="MuiInputBase-root MuiInputBase-colorPrimary MuiTablePagination-select MuiSelect-root MuiTablePagination-input css-oegngy-MuiInputBase-root-MuiTablePagination-select"
+          >
+            <div
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-labelledby="«r2» «r1»"
+              class="MuiSelect-select MuiTablePagination-select MuiSelect-standard MuiInputBase-input css-18zjd9i-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input"
+              id="«r1»"
+              role="combobox"
+              tabindex="0"
+            >
+              20
+            </div>
+            <input
+              aria-hidden="true"
+              aria-invalid="false"
+              class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
+              name="pagination"
+              tabindex="-1"
+              value="20"
+            />
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiTablePagination-selectIcon MuiSelect-iconStandard css-ug7h84-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
+              data-testid="ArrowDropDownIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </div>
+          <p
+            class="MuiTablePagination-displayedRows css-11cfq65-MuiTablePagination-displayedRows"
+          />
+          <div
+            class="flexbox center-aligned"
+          >
+            <div>
+              1-3 of 3
+            </div>
+            <button
+              aria-label="prev"
+              class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge css-154kngp-MuiButtonBase-root-MuiIconButton-root"
+              disabled=""
+              tabindex="-1"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                data-testid="KeyboardArrowLeftIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6z"
+                />
+              </svg>
+            </button>
+            <div>
+              <button
+                aria-label="next"
+                class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge css-154kngp-MuiButtonBase-root-MuiIconButton-root"
+                disabled=""
+                tabindex="-1"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                  data-testid="KeyboardArrowRightIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="loaderContainer shrunk"
+      >
+        <div
+          class="small  loader"
+        >
+          <span
+            class="dot dot_1"
+          />
+          <span
+            class="dot dot_2"
+          />
+          <span
+            class="dot dot_3"
+          />
+          <span
+            class="dot dot_4"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>"
+`;

@@ -1,0 +1,42 @@
+{
+    "collections": [
+        {
+            "name": "breakpoints",
+            "modes": [
+                "Mode 1"
+            ],
+            "variables": {
+                "xl": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 1536
+                    }
+                },
+                "lg": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 1200
+                    }
+                },
+                "md": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 900
+                    }
+                },
+                "sm": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 600
+                    }
+                },
+                "xs": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 444
+                    }
+                }
+            }
+        }
+    ]
+}

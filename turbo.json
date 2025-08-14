@@ -1,0 +1,83 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        "dist/**",
+        "storybook-static/**"
+      ],
+      "cache": false
+    },
+    "@northern.tech/common-ui#build": {
+      "dependsOn": [
+        "@northern.tech/store#build"
+      ],
+      "cache": false
+    },
+    "@northern.tech/store#build": {
+      "dependsOn": [
+        "@northern.tech/utils#build"
+      ],
+      "cache": false
+    },
+    "@northern.tech/testing#build": {
+      "dependsOn": [
+        "@northern.tech/utils#build"
+      ]
+    },
+    "@northern.tech/utils#build": {
+      "dependsOn": [
+        "@northern.tech/types#build"
+      ]
+    },
+    "lint": {
+      "dependsOn": [
+        "@northern.tech/common-ui#build"
+      ],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "pre-publish": {
+      "dependsOn": [
+        "build",
+        "lint",
+        "test"
+      ]
+    },
+    "test-ci": {
+      "cache": true,
+      "dependsOn": [
+        "^@northern.tech/testing#build"
+      ]
+    },
+    "@northern.tech/common-ui#test-ci": {
+      "dependsOn": [
+        "@northern.tech/store#build",
+        "@northern.tech/store#test-ci"
+      ]
+    },
+    "@northern.tech/common#test-ci": {
+      "dependsOn": [
+        "@northern.tech/common-ui#build",
+        "@northern.tech/common-ui#test-ci"
+      ]
+    },
+    "publish": {
+      "dependsOn": [
+        "build",
+        "lint",
+        "test"
+      ]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

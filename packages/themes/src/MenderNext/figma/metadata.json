@@ -1,0 +1,18 @@
+{
+    "collections": [
+        {
+            "name": "metadata",
+            "modes": [
+                "Mode 1"
+            ],
+            "variables": {
+                "version": {
+                    "type": "string",
+                    "values": {
+                        "Mode 1": "6.1.0"
+                    }
+                }
+            }
+        }
+    ]
+}

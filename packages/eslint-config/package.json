@@ -1,0 +1,42 @@
+{
+  "name": "@northern.tech/eslint-config",
+  "version": "0.6.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "files": [
+    "library.js",
+    "react.js",
+    "storybook.js"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "8.x",
+    "@typescript-eslint/parser": "8.x",
+    "eslint-config-prettier": "^10.x",
+    "eslint-import-resolver-typescript": "4.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-mdx": "^3.x",
+    "eslint-plugin-prettier": "5.x",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "5.x",
+    "eslint-plugin-sonarjs": "3.x",
+    "eslint-plugin-storybook": "^9.x",
+    "globals": "16.x",
+    "typescript-eslint": "8.x"
+  },
+  "devDependencies": {
+    "tsup": "8.5.0"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsup library.js react.js storybook.js",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next"
+  }
+}

@@ -1,0 +1,190 @@
+variables:
+  DEFAULT_BRANCH: 'main'
+  GITHUB_REPO_URL:
+    description: "The Github Repo URL for release-please, in the format of 'owner/repo'"
+    value: 'NorthernTechHQ/nt-gui'
+  GITHUB_USER_NAME:
+    description: 'The Github username for release-please'
+    value: 'mender-test-bot'
+  GITHUB_USER_EMAIL:
+    description: 'The Github user email for release-please'
+    value: 'mender@northern.tech'
+  GIT_CLIFF:
+    description: 'Run git cliff to override the release-please changelog'
+    value: 'true'
+    options:
+      - 'true'
+      - 'false'
+  NODE_IMAGE:
+    value: 'node:24'
+    description: 'Node version to use for building and testing'
+  GITHUB_STATUS_API_URL:
+    value: 'https://api.github.com/repos/NorthernTechHQ/$CI_PROJECT_NAME/statuses/$CI_COMMIT_SHA'
+    description: 'Github endpoint to update CI pipeline progress'
+
+stages:
+  - test
+  - build
+  - changelog
+  - release
+
+default:
+  tags:
+    - hetzner-amd-beefy
+
+image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${NODE_IMAGE}
+
+include:
+  - project: 'Northern.tech/Mender/mendertesting'
+    file:
+      - '.gitlab-ci-github-status-updates.yml'
+
+lint:
+  stage: test
+  needs: []
+  script:
+    - npm ci
+    - npm run lint
+
+test:
+  stage: test
+  needs: []
+  script:
+    - npm ci
+    - npm run test
+
+build:
+  stage: build
+  needs: []
+  script:
+    - npm ci
+    - npm run release
+    - npm run build-storybook
+  artifacts:
+    paths:
+      - storybook-static
+
+changelog:
+  stage: changelog
+  image: 'registry.gitlab.com/northern.tech/mender/mender-test-containers:release-please-v1-master'
+  variables:
+    GIT_DEPTH: 0 # Always get the full history
+    GIT_STRATEGY: clone
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/"
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+  before_script:
+    # Setting up git
+    - git config --global user.email "${GITHUB_USER_EMAIL}"
+    - git config --global user.name "${GITHUB_USER_NAME}"
+    # GITHUB_TOKEN for Github cli authentication
+    - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
+  script:
+    - release-please release-pr
+      --token=${GITHUB_BOT_TOKEN_REPO_FULL}
+      --repo-url=${GITHUB_REPO_URL}
+      --target-branch=${CI_COMMIT_REF_NAME}
+      --monorepo-tags
+    # git cliff: override the changelog
+    - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
+    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true # Ignore already existing remote
+    - gh repo set-default https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
+    # deal with the bundled changelog
+    # since the CHANGELOG is for the entire repo we pick the first release PR to update here for now, the components get their own log updated further down
+    - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" | grep -e 'release-please--branches--${CI_COMMIT_REF_NAME}\t' | head -n1 | awk '{print $1}' || echo "notfound")
+    - | # update the PR body for the global changelog if a PR exists
+      if [[ "${RELEASE_PLEASE_PR}" != "notfound" ]]; then
+        gh pr checkout --force $RELEASE_PLEASE_PR
+        wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped
+        git cliff --bump --output CHANGELOG.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
+        git add CHANGELOG.md
+        git commit --amend -s --no-edit
+        git push github-${CI_JOB_ID} --force
+        git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
+        gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
+        rm tmp_pr_body.md
+      else
+        echo "the PR for the bundle component is already merged - skipping"
+      fi
+    # deal with the component's changelogs
+    - |
+      for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
+        component_name=$(echo "$component" | cut -d'/' -f2);
+        RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --search "${component_name}" --json number --jq '.[0].number');
+        if [[ -z "$RELEASE_PLEASE_PR" ]]; then
+          echo "INFO - no PR found for $component_name";
+          continue;
+        fi
+        gh pr checkout --force $RELEASE_PLEASE_PR;
+        cd $component;
+          wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped;
+          git cliff --bump --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "${component_name}.*";
+          cat CHANGELOG.md;
+          git add CHANGELOG.md;
+          git commit --amend -s --no-edit;
+          git push github-${CI_JOB_ID} --force;
+          git cliff --unreleased --bump -o tmp_pr_body.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "${component_name}.*";
+          gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md;
+          rm tmp_pr_body.md;
+        cd ../..;
+      done
+  after_script:
+    - git remote remove github-${CI_JOB_ID}
+
+release:github:
+  stage: .post
+  image: 'registry.gitlab.com/northern.tech/mender/mender-test-containers:release-please-v1-master'
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/" # Release from maintenance branches
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+      when: manual
+  needs:
+    - job: changelog
+  script:
+    - npm ci
+    - release-please github-release
+      --token=${GITHUB_BOT_TOKEN_REPO_FULL}
+      --repo-url=${GITHUB_REPO_URL}
+      --target-branch=${CI_COMMIT_REF_NAME}
+      --monorepo-tags
+
+release:npmjs:
+  stage: .post
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/" # Release from maintenance branches
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+      when: manual
+  needs:
+    - job: changelog
+  script:
+    - npm ci
+    - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
+    - npm run publish-packages
+  allow_failure:
+    exit_codes:
+      - 1
+
+pages:
+  stage: release
+  rules:
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH =~ "/^pr_/"
+      variables:
+        PAGES_PREFIX: $CI_COMMIT_BRANCH
+  needs:
+    - job: build
+      artifacts: true
+  variables:
+    GITHUB_STATUS_API_JSON_F: '{"state": "%s", "context": "ci/storybook", "target_url": "%s", "description": "%s"}'
+    PAGES_PREFIX: ''
+  script:
+    - json="$(printf "$GITHUB_STATUS_API_JSON_F" "success" "${CI_PAGES_URL}" "Storybook deployed")"
+    - curl -f -H "$GITHUB_AUTH" -d "$json" "$GITHUB_STATUS_API_URL"
+  pages:
+    path_prefix: '$PAGES_PREFIX'
+  publish: storybook-static
+  artifacts:
+    paths:
+      - storybook-static

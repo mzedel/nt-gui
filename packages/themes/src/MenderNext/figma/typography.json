@@ -1,0 +1,134 @@
+{
+    "collections": [
+        {
+            "name": "typography",
+            "modes": [
+                "Mode 1"
+            ],
+            "variables": {
+                "fontFamily": {
+                    "type": "string",
+                    "values": {
+                        "Mode 1": "Red Hat Display"
+                    }
+                },
+                "fontWeightLight": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 300
+                    }
+                },
+                "fontWeightRegular": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 400
+                    }
+                },
+                "fontWeightMedium": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 500
+                    }
+                },
+                "fontWeightBold": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 700
+                    }
+                },
+                "_fontSize": {
+                    "1rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 16
+                        }
+                    },
+                    "0,75rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 12
+                        }
+                    },
+                    "0,875rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 14
+                        }
+                    },
+                    "1,25rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 20
+                        }
+                    },
+                    "1,5rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 24
+                        }
+                    },
+                    "2,125rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 34
+                        }
+                    },
+                    "3rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 48
+                        }
+                    },
+                    "3,75rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 60
+                        }
+                    },
+                    "6rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 96
+                        }
+                    },
+                    "0,625rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 10
+                        }
+                    },
+                    "0,8125rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 13
+                        }
+                    },
+                    "0,9375rem": {
+                        "type": "number",
+                        "values": {
+                            "Mode 1": 15
+                        }
+                    }
+                },
+                "fontWeightSemiBold": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 600
+                    }
+                },
+                "fontFamily (body)": {
+                    "type": "string",
+                    "values": {
+                        "Mode 1": "Red Hat Text"
+                    }
+                },
+                "fontFamily (mono)": {
+                    "type": "string",
+                    "values": {
+                        "Mode 1": "Red Hat Mono"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+  "include-component-in-tag": true,
+  "include-v-in-tag": false,
+  "release-type": "simple",
+  "separate-pull-requests": true,
+  "signoff": "mender-test-bot <mender@northern.tech>",
+  "packages": {
+    "packages/common": {
+      "release-type": "node"
+    },
+    "packages/common-ui": {
+      "release-type": "node"
+    },
+    "packages/eslint-config": {
+      "release-type": "node"
+    },
+    "packages/prettier-config": {
+      "release-type": "node"
+    },
+    "packages/store": {
+      "release-type": "node"
+    },
+    "packages/testing": {
+      "release-type": "node"
+    },
+    "packages/types": {
+      "release-type": "node"
+    },
+    "packages/typescript-config": {
+      "release-type": "node"
+    },
+    "packages/utils": {
+      "release-type": "node"
+    },
+    "packages/themes": {
+      "release-type": "node"
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}

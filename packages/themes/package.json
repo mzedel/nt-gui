@@ -1,0 +1,62 @@
+{
+  "name": "@northern.tech/themes",
+  "version": "0.3.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "exports": {
+    "./Mender": {
+      "types": "./dist/Mender/index.d.ts",
+      "import": "./dist/Mender/index.js",
+      "require": "./dist/Mender/index.cjs"
+    },
+    "./MenderNext": {
+      "types": "./dist/MenderNext/index.d.ts",
+      "import": "./dist/MenderNext/index.js",
+      "require": "./dist/MenderNext/index.cjs"
+    },
+    "./Mender/styles/main.css": {
+      "default": "./dist/Mender/styles/main.css"
+    },
+    "./MenderNext/styles/main.css": {
+      "default": "./dist/MenderNext/styles/main.css"
+    },
+    "./Alvaldi": {
+      "types": "./dist/Alvaldi/index.d.ts",
+      "import": "./dist/Alvaldi/index.js",
+      "require": "./dist/Alvaldi/index.cjs"
+    },
+    "./CFEngine": {
+      "types": "./dist/CFEngine/index.d.ts",
+      "import": "./dist/CFEngine/index.js",
+      "require": "./dist/CFEngine/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint src/**/*.{js,ts} *.{js,ts}",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "devDependencies": {
+    "@northern.tech/eslint-config": "*",
+    "@northern.tech/typescript-config": "*",
+    "esbuild-plugin-less": "^1.3.22",
+    "eslint": "^9.27.0",
+    "tsup": "8.5.0"
+  },
+  "dependencies": {
+    "@mui/material": "^7.x"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@northern.tech/types",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "devDependencies": {
+    "@northern.tech/typescript-config": "*",
+    "tsup": "8.5.0"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@northern.tech/typescript-config",
+  "version": "0.2.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "type": "module",
+  "files": [
+    "base.json",
+    "react-app.json",
+    "react-library.json",
+    "tsup-config.js"
+  ],
+  "devDependencies": {
+    "tsup": "8.5.0"
+  },
+  "scripts": {
+    "build": "tsup base.json react-app.json react-library.json tsup-config.js",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next"
+  }
+}

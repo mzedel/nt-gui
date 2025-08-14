@@ -1,0 +1,24 @@
+{
+  "server": {
+    "port": 80,
+    "middlewareMode": false
+  },
+  "test": {
+    "env": {
+      "BABEL_ENV": "test",
+      "NODE_ENV": "test",
+      "PUBLIC_URL": "",
+      "TZ": "UTC"
+    },
+    "retry": 0,
+    "environment": "jsdom",
+    "globals": true,
+    "fakeTimers": {
+      "toFake": [
+        "setTimeout",
+        "clearTimeout",
+        "Date"
+      ]
+    }
+  }
+}

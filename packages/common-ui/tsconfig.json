@@ -1,0 +1,11 @@
+{
+  "extends": "@northern.tech/typescript-config/react-library.json",
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}

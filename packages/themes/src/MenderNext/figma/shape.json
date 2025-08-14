@@ -1,0 +1,24 @@
+{
+    "collections": [
+        {
+            "name": "shape",
+            "modes": [
+                "Mode 1"
+            ],
+            "variables": {
+                "borderRadius": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 4
+                    }
+                },
+                "none": {
+                    "type": "number",
+                    "values": {
+                        "Mode 1": 0
+                    }
+                }
+            }
+        }
+    ]
+}

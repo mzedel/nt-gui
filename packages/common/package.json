@@ -1,0 +1,68 @@
+{
+  "name": "@northern.tech/common",
+  "version": "0.3.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./auditlogs/*": {
+      "types": "./dist/auditlogs/*.d.ts",
+      "import": "./dist/auditlogs/*.js",
+      "require": "./dist/auditlogs/*.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/**/*.{ts,tsx} src/*.{ts,tsx} *.ts",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next",
+    "test": "vitest",
+    "test-ci": "vitest run"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@mui/x-date-pickers": "^8.x",
+    "@northern.tech/eslint-config": "*",
+    "@northern.tech/testing": "*",
+    "@northern.tech/typescript-config": "*",
+    "@types/react": "^19.x",
+    "@types/react-dom": "^19.x",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "9.27.0",
+    "jsdom": "^26.1.0",
+    "msw": "^2.7.6",
+    "tsup": "8.5.0",
+    "typescript": "5.9.2",
+    "vitest": "^3.1.3"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^7.x",
+    "@mui/material": "^7.x",
+    "@northern.tech/common-ui": "*",
+    "@northern.tech/store": "*",
+    "@northern.tech/utils": "*",
+    "dayjs": "^1.x",
+    "msgpack5": "^6.x",
+    "react": "^19.x",
+    "react-dom": "^19.x",
+    "react-redux": "^9.x",
+    "react-router-dom": "^7.x",
+    "tss-react": "^4.x",
+    "universal-cookie": "8.0.x"
+  }
+}
