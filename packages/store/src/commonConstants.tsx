@@ -45,7 +45,11 @@ export const TIMEOUTS = {
 
 export const DEVICE_ONLINE_CUTOFF = { interval: 1, intervalName: timeUnits.days };
 
-export const defaultIdAttribute = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
+export interface IdAttribute {
+  attribute: string;
+  scope: string;
+}
+export const defaultIdAttribute: Readonly<IdAttribute> = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
 export const credentialTypes = {
   aws: Credentials.type.AWS,

@@ -36,7 +36,7 @@ import type {
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '../constants';
+import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, apiRoot, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '../constants';
 import type { SortOptions } from '../constants';
 import { getDevicesById, getGlobalSettings, getOrganization, getUserCapabilities } from '../selectors';
 import { commonErrorHandler, createAppAsyncThunk } from '../store';
@@ -46,7 +46,7 @@ import { mapTermsToFilters } from '../utils';
 import { DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEPLOYMENT_TYPES, deploymentPrototype } from './constants';
 import { getDeploymentsById, getDeploymentsByStatus as getDeploymentsByStatusSelector } from './selectors';
 
-const { isUUID } = validator
+const { isUUID } = validator;
 const { receivedDevice, setSnackbar } = storeActions;
 
 // default per page until pagination and counting integrated
@@ -466,4 +466,17 @@ export const saveDeltaDeploymentsConfig = createAppAsyncThunk(
         return Promise.all([dispatch(actions.setDeploymentsConfig(newConfig)), dispatch(setSnackbar('Settings saved successfully'))]);
       });
   }
+);
+
+export const generateDeploymentLogAnalysis = createAppAsyncThunk(
+  `${sliceName}/generateDeploymentLogAnalysis`,
+  ({ deploymentId, deviceId }: { deploymentId: string; deviceId: string }, { dispatch, rejectWithValue }) =>
+    GeneralApi.get(`${apiRoot}/v1alpha1/deployments/deployments/${deploymentId}/devices/${deviceId}/log/explain`)
+      .then(({ data: result }) => Promise.resolve(result))
+      .catch(err => {
+        if (err.response.status === 429) {
+          return rejectWithValue(err.response);
+        }
+        commonErrorHandler(err, 'There was an error analysing the deployment log:', dispatch);
+      })
 );

@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Artifact as BackendArtifact, Release as BackendRelease } from '@northern.tech/types/MenderTypes';
+import type { Artifact as BackendArtifact, Release as BackendRelease, DeltaJobDetailsItem, DeltaJobsListItem } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -22,6 +22,9 @@ export type Artifact = BackendArtifact & { installCount?: number; url?: string }
 export type Release = BackendRelease & { artifacts: Artifact[]; name: string };
 
 export const sliceName = 'releases';
+
+type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;
+
 export type ReleasesList = {
   isLoading?: boolean;
   page: number;
@@ -38,10 +41,20 @@ export type ReleasesList = {
   total: number;
   type: string;
 };
+
 export type ReleaseSliceType = {
   artifacts: never[];
   byId: Record<string, Release>;
+  deltaJobs: Record<string, EnhancedJobDetailsItem>;
+  deltaJobsList: {
+    jobIds: string[];
+    page: number;
+    perPage: number;
+    sort?: SortOptions;
+    total: 0;
+  };
   releasesList: ReleasesList;
+  selectedJob: string | null;
   selectedRelease: string | null;
   tags: string[];
   updateTypes: string[];
@@ -86,6 +99,23 @@ export const initialState: ReleaseSliceType = {
     }
     */
   },
+  deltaJobs: {
+    /*
+      [jobId]: {
+        id: '',
+        ...
+      }
+      */
+  },
+  deltaJobsList: {
+    ...DEVICE_LIST_DEFAULTS,
+    jobIds: [],
+    total: 0,
+    sort: {
+      direction: SORTING_OPTIONS.desc,
+      key: 'started'
+    }
+  },
   releasesList: {
     ...DEVICE_LIST_DEFAULTS,
     searchedIds: [],
@@ -104,6 +134,7 @@ export const initialState: ReleaseSliceType = {
   },
   tags: [],
   updateTypes: [],
+  selectedJob: null,
   /*
    * Return single release with corresponding Artifacts
    */
@@ -136,8 +167,36 @@ export const releaseSlice = createSlice({
     selectedRelease: (state, action: PayloadAction<string | null>) => {
       state.selectedRelease = action.payload;
     },
-    setReleaseListState: (state, action: PayloadAction<ReleasesList>) => {
+    setReleaseListState: (state, action) => {
       state.releasesList = action.payload;
+    },
+    receivedDeltaJobs: (state, action) => {
+      const { jobs, total } = action.payload;
+      state.deltaJobs = jobs.reduce(
+        (accu, job) => {
+          accu[job.id] = {
+            ...accu[job.id],
+            ...job
+          };
+          return accu;
+        },
+        { ...state.deltaJobs }
+      );
+      state.deltaJobsList.jobIds = jobs.map(job => job.id);
+      state.deltaJobsList.total = total;
+    },
+    receivedDeltaJobDetails: (state, action) => {
+      const job = action.payload;
+      state.deltaJobs[job.id] = {
+        ...state.deltaJobs[job.id],
+        ...job
+      };
+    },
+    setDeltaJobsListState: (state, action) => {
+      state.deltaJobsList = { ...state.deltaJobsList, ...action.payload };
+    },
+    setSelectedJob: (state, action) => {
+      state.selectedJob = action.payload;
     }
   }
 });

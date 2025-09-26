@@ -13,6 +13,7 @@
 //    limitations under the License.
 import type { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
+import type { AxiosResponse } from 'axios';
 import { isCancel } from 'axios';
 import { v4 as uuid } from 'uuid';
 
@@ -131,6 +132,19 @@ export const getArtifactUrl = createAppAsyncThunk(`${sliceName}/getArtifactUrl`,
   })
 );
 
+const pollLocation = async (location, attempt = 1, maxAttempts = 5, delay = TIMEOUTS.oneSecond) => {
+  try {
+    await GeneralApi.get(location);
+    return Promise.resolve();
+  } catch {
+    if (attempt >= maxAttempts) {
+      throw new Error(`Couldn't get ${location} after ${maxAttempts} attempts`);
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return pollLocation(location, attempt + 1, maxAttempts, delay);
+  }
+};
+
 type ArtifactPayload = {
   file: File;
   meta: {
@@ -171,13 +185,19 @@ export const createArtifact = createAppAsyncThunk(`${sliceName}/createArtifact`,
       cancelSource.signal
     )
   ])
-    .then(() => {
-      setTimeout(() => {
-        dispatch(getReleases());
-        dispatch(selectRelease(file.name));
-      }, TIMEOUTS.oneSecond);
-      return Promise.resolve(dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds })));
+    .then(tasks => {
+      const generateResponse = tasks[tasks.length - 1] as AxiosResponse;
+      const generateLocation = generateResponse.headers[headerNames.location] as string;
+      const location = generateLocation.replace('/generate', '');
+      return pollLocation(location);
     })
+    .then(() =>
+      Promise.all([
+        dispatch(getReleases()),
+        dispatch(selectRelease(meta.name!)),
+        dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds }))
+      ])
+    )
     .catch(err => {
       if (isCancel(err)) {
         return dispatch(setSnackbar({ message: 'The artifact generation has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
@@ -438,4 +458,28 @@ export const getUpdateTypes = createAppAsyncThunk(`${sliceName}/getReleaseTypes`
   GeneralApi.get(`${deploymentsApiUrlV2}/releases/all/types`)
     .catch(err => commonErrorHandler(err, `Existing update types couldn't be retrieved.`, dispatch))
     .then(({ data: types }) => Promise.resolve(dispatch(actions.receiveReleaseTypes(types))))
+);
+
+interface DeltaListingProps {
+  page?: number;
+  perPage?: number;
+  sort?: SortOptions;
+}
+export const getDeltaGenerationJobs = createAppAsyncThunk(`${sliceName}/getDeltaGenerationJobs`, (options: DeltaListingProps = {}, { dispatch }) => {
+  const { page = defaultPage, perPage = defaultPerPage, sort = {} } = options;
+  const { key: sortKey, direction: sortDirection } = sort as SortOptions;
+  const sortParam = sortKey && sortDirection ? `&sort=${sortKey}:${sortDirection}` : '';
+  return GeneralApi.get(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs?page=${page}&per_page=${perPage}${sortParam}`)
+    .then(({ data, headers }) => {
+      const total = Number(headers[headerNames.total]) || data.length;
+      const result = { jobs: data, total };
+      return Promise.all([dispatch(actions.receivedDeltaJobs(result)), result]);
+    })
+    .catch(err => commonErrorHandler(err, 'There was an error retrieving delta generation jobs:', dispatch));
+});
+
+export const getDeltaGenerationJobDetails = createAppAsyncThunk(`${sliceName}/getDeltaGenerationJobDetails`, (jobId, { dispatch }) =>
+  GeneralApi.get(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs/${jobId}`)
+    .then(({ data }) => dispatch(actions.receivedDeltaJobDetails(data)))
+    .catch(err => commonErrorHandler(err, 'There was an error retrieving delta generation job details:', dispatch))
 );

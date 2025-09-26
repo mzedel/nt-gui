@@ -29,6 +29,7 @@ export const defaultReports = [{ ...emptyChartSelection, group: null, attribute:
 export const BEGINNING_OF_TIME = '2016-01-01T00:00:00.000Z';
 
 export const locations = {
+  cn: { key: 'cn', title: 'China', location: 'cn.hosted.mender.io' },
   eu: { key: 'eu', title: 'EU', location: 'eu.hosted.mender.io' },
   us: { key: 'us', title: 'US', location: 'hosted.mender.io' }
 } as const;

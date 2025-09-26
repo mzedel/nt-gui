@@ -62,6 +62,7 @@ dayjs.extend(durationDayJs);
 const { setDeviceListState, setFirstLoginAfterSignup, setTooltipsState, setShowStartupNotification } = storeActions;
 
 const featureFlags = [
+  'hasAiEnabled',
   'hasAuditlogs',
   'hasMultitenancy',
   'hasDeltaProgress',
@@ -96,7 +97,7 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
     environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || state.app[flag] }), {});
     environmentFeatures = {
       ...featureFlags.reduce((accu, flag) => ({ ...accu, [flag]: stringToBoolean(features[flag]) }), {}),
-      isHosted: stringToBoolean(features.isHosted) || window.location.hostname.includes('hosted.mender.io'),
+      isHosted: stringToBoolean(features.isHosted) || window.location.hostname.includes('hosted.mender.io')
     };
     onboardingComplete = !stringToBoolean(environmentFeatures.isHosted) || stringToBoolean(disableOnboarding) || onboardingComplete;
     versionInfo = {

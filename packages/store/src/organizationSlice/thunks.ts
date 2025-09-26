@@ -35,7 +35,6 @@ import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AvailablePlans, ContentType, SortOptions } from '../constants';
-import { PLANS } from '../constants';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
@@ -106,10 +105,13 @@ export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createO
   return (
     Api.postUnauthorized(target, data)
       .catch(err => {
-        if (err.response.status >= 400 && err.response.status < 500) {
+        if (err.response?.status >= 400 && err.response?.status < 500) {
           dispatch(setSnackbar({ message: err.response.data.error, autoHideDuration: TIMEOUTS.fiveSeconds }));
-          return Promise.reject(err);
+        } else {
+          // This handles "timeouts", "general connectivity" and "500 - Internal Server Error" errors
+          dispatch(setSnackbar({ message: 'There was an error creating your account', autoHideDuration: TIMEOUTS.fiveSeconds }));
         }
+        return Promise.reject(err);
       })
       //TODO: resolve the case with no response more gracefully
       //UPD: soon to be removed due to change to the subscription flow
@@ -352,39 +354,42 @@ export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrga
     return Promise.all(tasks);
   })
 );
+
 export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`, (_, { dispatch }) =>
-  Api.get(`${tenantadmApiUrlv2}/billing/profile`).then(res => dispatch(actions.setBillingProfile(res.data)))
+  Api.get(`${tenantadmApiUrlv2}/billing/profile`)
+    .catch(err => commonErrorHandler(err, 'There was an error getting your billing profile:', dispatch, commonErrorFallback))
+    .then(res => dispatch(actions.setBillingProfile(res.data)))
 );
 
-export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, (_, { dispatch }) => {
-  const tasks = [dispatch(getBillingPreview({ preview_mode: PreviewRequestEnum.preview_mode.NEXT })).unwrap(), dispatch(getCurrentSubscription()).unwrap()];
-  Promise.all(tasks).then(([currentPreview, currentSubscription]) => dispatch(actions.setSubscription({ ...currentPreview, ...currentSubscription })));
+export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, async (_, { dispatch }) => {
+  // We need to fetch current subscription first to ensure non-stripe customers handled right
+  const currentSubscription = await dispatch(getCurrentSubscription()).unwrap();
+  const currentPreview = await dispatch(getBillingPreview({ preview_mode: PreviewRequestEnum.preview_mode.NEXT })).unwrap();
+  return dispatch(actions.setSubscription({ ...currentPreview, ...currentSubscription }));
 });
 
 //Can also be used to get current subscription when no products supplied
-export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, (order: PreviewRequest) =>
-  Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order).then(({ data }) =>
-    order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data
-  )
+export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, (order: PreviewRequest, { dispatch }) =>
+  Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order)
+    .catch(err => commonErrorHandler(err, 'There was an error getting your billing information:', dispatch, commonErrorFallback))
+    .then(({ data }) => (order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data))
 );
 
-export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurrentSubscription`, () =>
-  Api.get(`${tenantadmApiUrlv2}/billing/subscription`).then(res => res.data)
+export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurrentSubscription`, (_, { dispatch }) =>
+  Api.get(`${tenantadmApiUrlv2}/billing/subscription`)
+    .then(res => res.data)
+    .catch(err => {
+      if (err.response && err.response.status === 404) {
+        throw new Error('Request failed with status code 404');
+      }
+      return commonErrorHandler(err, 'There was an error retrieving your current subscription', dispatch, commonErrorFallback);
+    })
 );
-
-const successMessage = (planId: string) =>
-  `Thank you! You have successfully subscribed to the ${PLANS[planId].name} plan.  You can view and edit your billing details on the Organization and billing page.`;
 
 export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription`, order)
     .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
-    .then(() =>
-      Promise.all([
-        dispatch(setSnackbar(successMessage(order.plan))),
-        setTimeout(() => dispatch(getDeviceLimit()), TIMEOUTS.threeSeconds),
-        dispatch(getUserOrganization())
-      ])
-    )
+    .then(() => Promise.all([setTimeout(() => dispatch(getDeviceLimit()), TIMEOUTS.threeSeconds), dispatch(getUserOrganization())]))
 );
 
 export const sendSupportMessage = createAppAsyncThunk(`${sliceName}/sendSupportMessage`, (content: SupportRequest, { dispatch }) =>

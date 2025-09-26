@@ -31,10 +31,7 @@ import { DEVICE_STATES } from './constants';
 import { expectedOnboardingActions } from './onboardingSlice/thunks.test';
 import { actions as organizationActions } from './organizationSlice';
 import { useAppInit } from './storehooks';
-import {
-  getUserOrganization,
-  tenantDataDivergedMessage
-} from './thunks';
+import { getUserOrganization, tenantDataDivergedMessage } from './thunks';
 import { actions as userActions } from './usersSlice';
 
 const middlewares = [thunk];

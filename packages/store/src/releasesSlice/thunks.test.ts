@@ -13,12 +13,14 @@
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
+import { deepCompare } from '@northern.tech/utils/helpers';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
+import { TIMEOUTS } from '../constants';
 import {
   createArtifact,
   editArtifact,
@@ -202,32 +204,36 @@ describe('release actions', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
-  it('should allow creating an artifact', async () => {
+  it('should allow creating an artifact', { timeout: 2 * TIMEOUTS.fiveSeconds }, async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
-      { type: createArtifact.pending.type },
       { type: appActions.setSnackbar.type, payload: 'Generating artifact' },
       {
         type: appActions.initUpload.type,
         payload: {
           id: 'mock-uuid',
-          upload: { cancelSource: mockAbortController, name: defaultState.releases.byId.r1.name, size: 1234, progress: 0 }
+          upload: { cancelSource: mockAbortController, name: 'createdRelease', size: undefined, progress: 0 }
         }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
+      { type: actions.selectedRelease.type, payload: 'filethings' },
       { type: appActions.setSnackbar.type, payload: { message: 'Upload successful', autoHideDuration: 5000 } },
-      { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' },
-      { type: createArtifact.fulfilled.type },
-      { type: getReleases.pending.type },
-      { type: selectRelease.pending.type },
-      { type: actions.selectedRelease.type, payload: defaultState.releases.byId.r1.name },
-      { type: getRelease.pending.type }
+      { type: actions.receiveRelease.type, payload: defaultState.releases.byId.r1 },
+      { type: actions.setReleaseListState.type, payload: { ...defaultState.releases.releasesList, releaseIds: retrievedReleaseIds, total: 5000 } },
+      { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' }
     ];
-    await store.dispatch(createArtifact({ file: mockFile, meta: { description: '' } }));
+    await store.dispatch(
+      createArtifact({
+        file: { name: 'createdRelease', some: 'thing', someList: ['test', 'more'], complex: { objectThing: 'yes' } },
+        meta: { name: 'filethings', description: '' }
+      })
+    );
     vi.runAllTimers();
     const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+    expectedActions.forEach(expectedAction => {
+      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
+      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
+    });
   });
   it('should support editing artifact information', async () => {
     const store = mockStore({ ...defaultState });

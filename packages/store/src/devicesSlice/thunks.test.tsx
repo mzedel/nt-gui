@@ -1115,6 +1115,7 @@ describe('troubleshooting related actions', () => {
     const { attributes, id } = defaultState.devices.byId.a1;
     const expectedActions = [
       { type: triggerDeviceUpdate.pending.type },
+      { type: appActions.setSnackbar.type, payload: 'Request has been sent.' },
       { type: getDeviceById.pending.type },
       { type: actions.receivedDevice.type, payload: { attributes, id } },
       { type: getDeviceById.fulfilled.type },
@@ -1132,6 +1133,7 @@ describe('troubleshooting related actions', () => {
     const { attributes, id } = defaultState.devices.byId.a1;
     const expectedActions = [
       { type: triggerDeviceUpdate.pending.type },
+      { type: appActions.setSnackbar.type, payload: 'Request has been sent.' },
       { type: getDeviceById.pending.type },
       { type: actions.receivedDevice.type, payload: { attributes, id } },
       { type: getDeviceById.fulfilled.type },
