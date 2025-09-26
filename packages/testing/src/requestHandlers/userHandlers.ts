@@ -127,6 +127,7 @@ export const userHandlers = [
     }
     return new HttpResponse(null, { status: 568 });
   }),
+  http.post(`${useradmApiUrlv2}/support/feedback/product`, async () => new HttpResponse(null, { status: 200 })),
   http.delete(
     `${useradmApiUrl}/roles/:roleId`,
     ({ params: { roleId } }) => new HttpResponse(null, { status: mockApiResponses.users.rolesById[roleId] ? 200 : 569 })
