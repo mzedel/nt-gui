@@ -124,7 +124,18 @@ exports[`LogDialog Component > renders correctly 1`] = `
 }
 
 .emotion-6 {
-  border: 1px solid;
+  background-color: #f5f5f5;
+  font-family: monospace;
+  border-radius: 4px;
+  padding: 16px;
+  overflow-y: auto;
+  position: relative;
+  white-space: pre-line;
+}
+
+.emotion-6 .copyable-content {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .emotion-7 {
@@ -400,7 +411,7 @@ exports[`LogDialog Component > renders correctly 1`] = `
         class="MuiDialogContent-root emotion-5"
       >
         <div
-          class="code emotion-6 log"
+          class="emotion-6 log"
         >
           things
         </div>
