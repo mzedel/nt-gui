@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useState } from 'react';
 
 import { Checkbox, FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
@@ -31,11 +30,11 @@ export const AddonSelect = (props: AddonSelectProps) => {
     onChange(value);
   };
   return (
-    <FormControl id="addons-form" style={{ maxWidth: 330 }}>
-      <InputLabel id="addons-selection-label">Select Addons</InputLabel>
+    <FormControl id="addons-form" style={{ width: 550 }}>
+      <InputLabel id="addons-selection-label">Select Add-ons (optional)</InputLabel>
       <Select
         multiple
-        label="Select Addons"
+        label="Select Add-ons (optional)"
         labelId="addons-selection-label"
         value={selectedAddons}
         onChange={onSelectedChange}
@@ -48,7 +47,7 @@ export const AddonSelect = (props: AddonSelectProps) => {
           </MenuItem>
         ))}
       </Select>
-      <FormHelperText className="info">Select any add-ons you are interested in adding to your plan.</FormHelperText>
+      <FormHelperText className="info">Select any Add-ons you are interested in including in your subscription</FormHelperText>
     </FormControl>
   );
 };

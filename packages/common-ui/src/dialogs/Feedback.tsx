@@ -11,9 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import {
   Close as CloseIcon,
@@ -41,8 +39,8 @@ import { makeStyles } from 'tss-react/mui';
 
 import actions from '@northern.tech/store/actions';
 import { TIMEOUTS } from '@northern.tech/store/constants';
-import type { AppDispatch } from '@northern.tech/store/store';
-import { submitFeedback } from '@northern.tech/store/thunks';
+import { useAppDispatch } from '@northern.tech/store/store';
+import { submitUserFeedback } from '@northern.tech/store/thunks';
 import { isDarkMode } from '@northern.tech/store/utils';
 
 const { setShowFeedbackDialog } = actions;
@@ -131,7 +129,7 @@ export const FeedbackDialog = () => {
   const [progress, setProgress] = useState(0);
   const [satisfaction, setSatisfaction] = useState(-1);
   const [feedback, setFeedback] = useState('');
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const isInitialized = useRef(false);
 
   const { classes } = useStyles();
@@ -151,7 +149,8 @@ export const FeedbackDialog = () => {
 
   const onSubmit = () => {
     setProgress(progress + 1);
-    dispatch(submitFeedback({ satisfaction: satisfactionLevels[satisfaction].title, feedback }));
+    // score should be in range [1..5]
+    dispatch(submitUserFeedback({ formId: 'product', feedback: { score: satisfaction + 1, message: feedback } }));
   };
 
   const Component = progressionLevels[progress];

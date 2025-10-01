@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
@@ -33,7 +32,9 @@ export const TextInput = ({
   type,
   validations = '',
   numericValidations = {},
-  value: passedValue = ''
+  value: passedValue = '',
+  requiredRendered = true,
+  width = 400
 }) => {
   const {
     clearErrors,
@@ -59,9 +60,13 @@ export const TextInput = ({
     <Controller
       name={id}
       control={control}
-      rules={{ required, validate, ...numericValidations }}
+      rules={{ required: required ? `${label} is required` : false, validate, ...numericValidations }}
       render={({ field: { value, onChange, onBlur, ref }, fieldState: { error } }) => (
-        <FormControl className={`${className} ${required ? 'required' : ''}`} error={Boolean(error?.message || errors[errorKey])} style={{ width: 400 }}>
+        <FormControl
+          className={`${className} ${required && requiredRendered ? 'required' : ''}`}
+          error={Boolean(error?.message || errors[errorKey])}
+          style={{ width }}
+        >
           <InputLabel htmlFor={id} {...InputLabelProps}>
             {label}
           </InputLabel>
@@ -84,7 +89,7 @@ export const TextInput = ({
             type={type}
             {...InputProps}
           />
-          <FormHelperText>{(errors[errorKey] || error)?.message}</FormHelperText>
+          <FormHelperText>{(errors[errorKey] || error)?.message as string}</FormHelperText>
         </FormControl>
       )}
     />

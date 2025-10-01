@@ -35,5 +35,6 @@ export * from './Pagination';
 export { default as Search } from './Search';
 export * from './Search';
 export { default as SharedSnackbar } from './SharedSnackbar';
+export * from './Sparkles';
 export * from './Time';
 export * from './xterm';

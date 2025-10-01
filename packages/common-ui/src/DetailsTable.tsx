@@ -15,6 +15,7 @@
 import type { CSSProperties, ReactNode, Ref } from 'react';
 
 import { Sort as SortIcon } from '@mui/icons-material';
+import type { TableCellProps } from '@mui/material';
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
@@ -38,6 +39,7 @@ interface SortParams {
 }
 
 interface ColumnDefinition {
+  cellProps: TableCellProps;
   defaultSortDirection?: 'asc' | 'desc';
   extras?: any;
   key: string;
@@ -69,7 +71,7 @@ export const DetailsTable = ({
   sort = {},
   style = {},
   tableRef,
-  onRowSelected,
+  onRowSelected = undefined,
   selectedRows = []
 }: DetailsTableProps) => {
   const { classes } = useStyles();
@@ -104,8 +106,13 @@ export const DetailsTable = ({
               <Checkbox indeterminate={false} checked={selectedRows.length === items.length} onChange={onSelectAllClick} />
             </TableCell>
           )}
-          {columns.map(({ extras, key, renderTitle, sortable, title }) => (
-            <TableCell key={key} className={`columnHeader ${sortable ? '' : 'nonSortable'}`} onClick={() => (sortable ? onChangeSorting(key) : null)}>
+          {columns.map(({ extras, key, renderTitle, sortable, title, cellProps = {} }) => (
+            <TableCell
+              key={key}
+              className={`columnHeader ${sortable ? '' : 'nonSortable'}`}
+              onClick={() => (sortable ? onChangeSorting(key) : null)}
+              {...cellProps}
+            >
               {renderTitle ? renderTitle(extras) : title}
               {sortable && <SortIcon className={`sortIcon ${sort.key === key ? 'selected' : ''} ${(sort.direction === SORTING_OPTIONS.desc).toString()}`} />}
             </TableCell>

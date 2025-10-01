@@ -40,7 +40,7 @@ export const MenderTooltip = withStyles(Tooltip, ({ palette, shadows, spacing })
   }
 }));
 
-interface MenderTooltipClickableProps extends TooltipProps {
+export interface MenderTooltipClickableProps extends TooltipProps {
   onboarding?: boolean;
   onOpenChange?: (open: boolean) => void;
   startOpen?: boolean;

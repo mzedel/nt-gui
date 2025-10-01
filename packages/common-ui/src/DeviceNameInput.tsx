@@ -87,6 +87,7 @@ export const DeviceNameInput = ({ device, isHovered }: DeviceNameInputProps) => 
       onClick={onInputClick}
       onChange={({ target: { value } }) => setValue(value)}
       type="text"
+      size="small"
       endAdornment={
         (isHovered || isEditing) && (
           <InputAdornment position="end">

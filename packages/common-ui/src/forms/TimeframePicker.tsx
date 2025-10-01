@@ -15,6 +15,7 @@
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { useTheme } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import dayjs from 'dayjs';
@@ -40,6 +41,9 @@ export const TimeframePicker = ({
   const [tonight] = useState(dayjs(propsTonight));
   const [maxStartDate, setMaxStartDate] = useState(tonight);
   const [minEndDate, setMinEndDate] = useState(tonight);
+
+  const theme = useTheme();
+  const isNextTheme = !theme.palette.background.lightgrey;
 
   const { control, setValue, watch, getValues } = useFormContext();
 
@@ -82,6 +86,7 @@ export const TimeframePicker = ({
               ...slotProps,
               textField: props => ({
                 ...slotProps.textField,
+                size: isNextTheme ? 'small' : 'medium',
                 inputProps: {
                   ...props.inputProps,
                   ...slotProps.textField?.inputProps,
@@ -108,6 +113,7 @@ export const TimeframePicker = ({
               ...slotProps,
               textField: props => ({
                 ...slotProps.textField,
+                size: isNextTheme ? 'small' : 'medium',
                 inputProps: {
                   ...props.inputProps,
                   ...slotProps.textField?.inputProps,

@@ -30,5 +30,7 @@ describe('Feedback Component', () => {
     await user.type(screen.getByPlaceholderText(/your feedback/i), 'some feedback');
     await user.click(screen.getByRole('button', { name: /submit/i }));
     expect(screen.getByText(/Thank you/i)).toBeVisible();
+    // Wait for every network request to finish
+    await act(() => vi.runAllTimersAsync());
   });
 });

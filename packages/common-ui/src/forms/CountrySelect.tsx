@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -22,15 +21,17 @@ import { countries } from '@northern.tech/store/constants';
 
 interface CountrySelectProps {
   [other: string]: any;
+  error: boolean;
+  helperText?: string;
   id?: string;
   onChange: (...event: any[]) => void;
 }
 const useStyles = makeStyles()(() => ({
-  autocomplete: { width: 400 }
+  autocomplete: { width: 500 }
 }));
 
 export const CountrySelect = (props: CountrySelectProps) => {
-  const { id, onChange, defaultValue, ...restProps } = props;
+  const { id, onChange, defaultValue, error, helperText, ...restProps } = props;
   const { classes } = useStyles();
   return (
     <Autocomplete
@@ -39,7 +40,9 @@ export const CountrySelect = (props: CountrySelectProps) => {
       options={countries}
       className={classes.autocomplete}
       autoHighlight
-      renderInput={params => <TextField {...params} label="Country" id={id || 'country'} />}
+      renderInput={params => (
+        <TextField {...params} error={error} helperText={helperText} label="Country or region" id={id || 'country'} />
+      )}
       onChange={(e, data) => onChange(data)}
       {...restProps}
       defaultValue={countries.find(country => country.code === defaultValue)}
@@ -57,10 +60,10 @@ export const ControlledCountrySelect = ({ control, id, required }) => {
   }, []);
   return (
     <Controller
-      rules={{ required }}
+      rules={{ required: required ? 'Country or region is required' : false }}
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render={({ field: { onChange }, formState, fieldState, ...props }) => (
-        <CountrySelect defaultValue={defaultCountry} onChange={onChange} id={id} {...props} />
+      render={({ field: { onChange }, formState, fieldState: { error }, ...props }) => (
+        <CountrySelect defaultValue={defaultCountry} onChange={onChange} id={id} error={!!error} helperText={error?.message} {...props} />
       )}
       name="country"
       control={control}
