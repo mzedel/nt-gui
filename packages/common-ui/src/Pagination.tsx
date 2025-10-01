@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
+import type { ReactNode } from 'react';
 import { memo, useEffect, useState } from 'react';
 
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
@@ -27,7 +28,7 @@ const { perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 const paginationIndex = 1;
 const paginationLimit = 10000;
 
-const MaybeWrapper = ({ children, disabled }) =>
+const MaybeWrapper = ({ children, disabled }: { children: ReactNode; disabled: boolean }) =>
   disabled ? (
     <MenderTooltip arrow placement="top" title="Please refine your filter criteria first in order to proceed.">
       <div>{children}</div>
@@ -36,7 +37,15 @@ const MaybeWrapper = ({ children, disabled }) =>
     <div>{children}</div>
   );
 
-export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerPage = defaultPerPage, showCountInfo = true }) => {
+interface TablePaginationActionsProps {
+  count: number;
+  onPageChange: (page: number) => void;
+  page?: number;
+  rowsPerPage?: number;
+  showCountInfo?: boolean;
+}
+
+export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerPage = defaultPerPage, showCountInfo = true }: TablePaginationActionsProps) => {
   const [pageNo, setPageNo] = useState(page + paginationIndex);
 
   useEffect(() => {
@@ -70,7 +79,19 @@ export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerP
   );
 };
 
-const Pagination = props => {
+interface PaginationProps {
+  className?: string;
+  count: number;
+  disabled?: boolean;
+  onChangePage: (page: number) => void;
+  onChangeRowsPerPage: (value: number) => void;
+  page?: number;
+  rowsPerPage: number;
+  rowsPerPageOptions?: number[];
+  showCountInfo?: boolean;
+}
+
+const Pagination = (props: PaginationProps) => {
   const { className, onChangeRowsPerPage, onChangePage, page = 0, rowsPerPageOptions = defaultRowsPerPageOptions, showCountInfo, ...remainingProps } = props;
   // this is required due to the MUI tablepagination being 0-indexed, whereas we work with 1-indexed apis
   // running it without adjustment will lead to warnings from MUI
@@ -84,7 +105,7 @@ const Pagination = props => {
       labelRowsPerPage="Rows"
       slotProps={{ select: { name: 'pagination' } }}
       rowsPerPageOptions={rowsPerPageOptions}
-      onRowsPerPageChange={e => onChangeRowsPerPage(e.target.value)}
+      onRowsPerPageChange={e => onChangeRowsPerPage(Number(e.target.value))}
       page={propsPage}
       onPageChange={onChangePage}
       ActionsComponent={actionProps => <TablePaginationActions {...actionProps} showCountInfo={showCountInfo} />}
@@ -93,7 +114,7 @@ const Pagination = props => {
   );
 };
 
-export const areEqual = (prevProps, nextProps) => {
+export const areEqual = (prevProps: PaginationProps, nextProps: PaginationProps) => {
   if (prevProps.page !== nextProps.page || prevProps.rowsPerPage !== nextProps.rowsPerPage || prevProps.disabled !== nextProps.disabled) {
     return false;
   }

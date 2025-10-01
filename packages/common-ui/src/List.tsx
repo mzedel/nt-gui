@@ -172,7 +172,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
     ListItemComponent
   } = props;
   const { page: pageNo = defaultPage, perPage: pageLength = defaultPerPage, selection: selectedRows = [], sort = {}, total: pageTotal = 1 } = listState;
-  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort;
+  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort as SortOptions;
   const listRef = useRef<HTMLDivElement | null>(null);
   const selectedRowsRef = useRef(selectedRows);
   const initRef = useRef<number | null>(null);

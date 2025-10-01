@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // material ui
-//@ts-nocheck
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 
 import type { ClassesOverrides } from './List';

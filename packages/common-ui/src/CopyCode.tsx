@@ -11,17 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import type { CSSProperties, ReactNode } from 'react';
 import { useState } from 'react';
-
-import CopyToClipboard from './CopyToClipboard';
 
 import { FileCopy as CopyPasteIcon } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
+
+import CopyToClipboard from './CopyToClipboard';
 
 const useStyles = makeStyles()(theme => ({
   button: { float: 'right', marginRight: theme.spacing(-2), marginTop: theme.spacing(-0.25) },

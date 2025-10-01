@@ -22,6 +22,7 @@ import { useDebounce } from '@northern.tech/utils/debouncehook';
 
 const useStyles = makeStyles()(theme => ({
   filters: {
+    // @ts-expect-error: lightgrey is only present in the old theme
     backgroundColor: theme.palette.background.lightgrey,
     columnGap: theme.spacing(2),
     display: 'flex',

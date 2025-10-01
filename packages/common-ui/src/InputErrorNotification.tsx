@@ -11,14 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useRef, useState } from 'react';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
 
 export const InputErrorNotification = ({ className, content }: { className: string; content: string }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     if (!content) {

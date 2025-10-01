@@ -11,8 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { ReactNode, RefObject } from 'react';
 import { useEffect } from 'react';
+import type { FieldValues, Mode } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { Button } from '@mui/material';
@@ -20,7 +21,12 @@ import { makeStyles } from 'tss-react/mui';
 
 import validator from 'validator';
 
-const validationMethods = {
+interface ValidationResult {
+  errortext: string;
+  isValid: boolean;
+}
+
+const validationMethods: Record<string, string> = {
   isAlpha: 'This field must contain only letters',
   isAlphanumeric: 'This field must contain only letters or numbers',
   isEmail: 'Please enter a valid email address',
@@ -30,7 +36,7 @@ const validationMethods = {
   isUUID: 'Please enter a valid ID'
 };
 
-const getErrorMsg = (validateMethod, args) => {
+const getErrorMsg = (validateMethod: string, args: string[]): string => {
   if (validationMethods[validateMethod]) {
     return validationMethods[validateMethod];
   }
@@ -38,7 +44,7 @@ const getErrorMsg = (validateMethod, args) => {
     case 'isLength':
       if (Number(args[0]) === 1) {
         return 'This field is required';
-      } else if (args[0] > 1) {
+      } else if (Number(args[0]) > 1) {
         return `Must be at least ${args[0]} characters long`;
       }
       break;
@@ -56,15 +62,16 @@ const getErrorMsg = (validateMethod, args) => {
     default:
       return 'There is an error with this field';
   }
+  return '';
 };
 
-const tryApplyValidationEntry = (value, validations = [], validationResults = []) => {
+const tryApplyValidationEntry = (value: string, validations: string[] = [], validationResults: ValidationResult[] = []): ValidationResult => {
   const validation = validations.shift();
   if (!validation) {
-    return validationResults.pop();
+    return validationResults.pop()!;
   }
   let args = validation.split(':');
-  const validateMethod = args.shift();
+  const validateMethod = args.shift()!;
   const tmpArgs = args;
   // We then merge two arrays, ending up with the value
   // to pass first, then options, if any. ['valueFromInput', 5]
@@ -82,8 +89,8 @@ const tryApplyValidationEntry = (value, validations = [], validationResults = []
   return { errortext: '', isValid: true };
 };
 
-const tryApplyValidations = (value, validations, initialValidationResult) =>
-  validations.split(',').reduce((accu, validation) => {
+const tryApplyValidations = (value: string, validations: string, initialValidationResult: ValidationResult): ValidationResult =>
+  validations.split(',').reduce((accu: ValidationResult, validation: string) => {
     if (!accu.isValid || !validation) {
       return accu;
     }
@@ -91,7 +98,15 @@ const tryApplyValidations = (value, validations, initialValidationResult) =>
     return tryApplyValidationEntry(value, alternatives, [accu]);
   }, initialValidationResult);
 
-const runPasswordValidations = ({ required, value, validations, isValid, errortext }) => {
+interface PasswordValidationInput {
+  errortext: string;
+  isValid: boolean;
+  required: boolean;
+  validations: string;
+  value: string;
+}
+
+const runPasswordValidations = ({ required, value, validations, isValid, errortext }: PasswordValidationInput): ValidationResult => {
   if (required && !value) {
     return { isValid: false, errortext: 'Password is required' };
   } else if (required || value) {
@@ -101,7 +116,15 @@ const runPasswordValidations = ({ required, value, validations, isValid, errorte
   return { isValid, errortext };
 };
 
-export const runValidations = ({ required, value, id, validations, wasMaybeTouched }) => {
+interface RunValidationsInput {
+  id?: string;
+  required: boolean;
+  validations: string;
+  value: string;
+  wasMaybeTouched?: boolean;
+}
+
+export const runValidations = ({ required, value, id, validations, wasMaybeTouched }: RunValidationsInput): ValidationResult => {
   const isValid = true;
   const errortext = '';
   if (id && id.includes('password')) {
@@ -119,6 +142,23 @@ const useStyles = makeStyles()(theme => ({
   cancelButton: { marginRight: theme.spacing() }
 }));
 
+interface FormProps<T extends FieldValues = FieldValues> {
+  autocomplete?: string;
+  buttonColor?: 'primary' | 'secondary' | 'inherit' | 'error' | 'info' | 'success' | 'warning';
+  children: ReactNode;
+  classes?: { buttonWrapper?: string; cancelButton?: string };
+  className?: string;
+  defaultValues?: T;
+  handleCancel?: () => void;
+  id?: string;
+  initialValues?: Partial<T>;
+  onSubmit: (data: T) => void | Promise<void>;
+  showButtons?: boolean;
+  submitLabel?: string;
+  submitRef?: RefObject<(() => void) | null>;
+  validationMode?: Mode;
+}
+
 export const Form = ({
   autocomplete,
   buttonColor,
@@ -134,7 +174,7 @@ export const Form = ({
   submitLabel,
   submitRef,
   validationMode = 'onChange'
-}) => {
+}: FormProps) => {
   const { classes: internalClasses } = useStyles();
   const methods = useForm({ mode: validationMode, defaultValues });
   const {

@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
@@ -77,7 +76,7 @@ export const PasswordInput = ({
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState([]);
   const [confirmationId] = useState(id.includes('current') ? '' : ['password', 'password_confirmation'].find(thing => thing !== id));
-  const timer = useRef();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const {
     clearErrors,
     formState: { errors },
@@ -86,7 +85,8 @@ export const PasswordInput = ({
     trigger,
     getValues
   } = useFormContext();
-  const confirmation = useWatch({ name: confirmationId });
+
+  const confirmation = useWatch({ name: confirmationId! });
   const errorKey = `${id}`;
   const { message } = errors[errorKey] ?? {};
 
@@ -185,7 +185,7 @@ export const PasswordInput = ({
                 }
                 {...showAsNotched}
               />
-              <FormHelperText>{(errors[errorKey] || error)?.message}</FormHelperText>
+              <FormHelperText>{(errors[errorKey] || error)?.message as string}</FormHelperText>
             </FormControl>
           )}
         />

@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { CSSProperties, KeyboardEvent } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form';
 
@@ -38,11 +38,27 @@ const startAdornment = (
 // due to search not working reliably for single letter searches, only start at 2
 const MINIMUM_SEARCH_LENGTH = 2;
 
-export const ControlledSearch = ({ className = '', isSearching, name = 'search', onSearch, placeholder = 'Search devices', style = {} }) => {
+interface ControlledSearchProps {
+  className?: string;
+  isSearching: boolean;
+  name?: string;
+  onSearch: (term: string) => Promise<void>;
+  placeholder?: string;
+  style?: CSSProperties;
+}
+
+export const ControlledSearch = ({
+  className = '',
+  isSearching,
+  name = 'search',
+  onSearch,
+  placeholder = 'Search devices',
+  style = {}
+}: ControlledSearchProps) => {
   const { control, watch } = useFormContext();
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
   const focusLockRef = useRef(true);
-  const timer = useRef(); // this + the above focusLock are needed to work around the focus being reassigned to the input field which would cause runaway search triggers
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined); // this + the above focusLock are needed to work around the focus being reassigned to the input field which would cause runaway search triggers
   const triggerDebounceRef = useRef(false); // this is needed to reject the search triggered through the recreation of the onSearch callback
 
   const searchValue = watch(name, '');
@@ -51,7 +67,7 @@ export const ControlledSearch = ({ className = '', isSearching, name = 'search',
 
   const focusAndLock = () => {
     focusLockRef.current = false;
-    inputRef.current.focus();
+    inputRef.current?.focus();
     clearTimeout(timer.current);
     triggerDebounceRef.current = false;
     timer.current = setTimeout(() => (focusLockRef.current = true), TIMEOUTS.oneSecond);
@@ -73,7 +89,7 @@ export const ControlledSearch = ({ className = '', isSearching, name = 'search',
   }, [debouncedSearchTerm, onSearch]);
 
   const onTriggerSearch = useCallback(
-    ({ key }) => {
+    ({ key }: KeyboardEvent<HTMLInputElement>) => {
       if (key === 'Enter' && (!debouncedSearchTerm || debouncedSearchTerm.length >= MINIMUM_SEARCH_LENGTH)) {
         onSearch(debouncedSearchTerm).then(focusAndLock);
       }
@@ -111,11 +127,17 @@ export const ControlledSearch = ({ className = '', isSearching, name = 'search',
 
 ControlledSearch.displayName = 'ConnectedSearch';
 
-const Search = props => {
+interface SearchProps extends Omit<ControlledSearchProps, 'onSearch'> {
+  onSearch: (term: string, shouldTrigger: boolean) => Promise<void>;
+  searchTerm?: string;
+  trigger?: boolean;
+}
+
+const Search = (props: SearchProps) => {
   const { className = '', searchTerm, onSearch, trigger } = props;
   const methods = useForm({ mode: 'onChange', defaultValues: { search: searchTerm ?? '' } });
   const { handleSubmit } = methods;
-  const onSubmit = useCallback(search => onSearch(search, !trigger), [onSearch, trigger]);
+  const onSubmit = useCallback((search: string) => onSearch(search, !trigger), [onSearch, trigger]);
   return (
     <FormProvider {...methods}>
       <form className={className} noValidate onSubmit={handleSubmit(({ search }) => onSearch(search, !trigger))}>

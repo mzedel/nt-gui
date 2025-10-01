@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -57,7 +56,7 @@ export const LeftNav = ({ sections }) => {
               : { component: NavLink, end: exact, to: path };
             return (
               <ListItem className={`navLink ${itemClass} ${classes.list}`} key={path} style={style} {...props}>
-                <ListItemText className={classes.listItem} primary={title} url={url} />
+                <ListItemText className={classes.listItem} primary={title} />
                 {!!icon && <ListItemIcon>{icon}</ListItemIcon>}
               </ListItem>
             );
