@@ -37,7 +37,8 @@ export type TextInputProps = {
   controlRef?: RefObject<HTMLInputElement | null>;
   helperText?: string;
   hint?: string;
-  id: string;
+  id?: string;
+  name: string;
   rules?: RegisterOptions;
   type?: string;
   value?: string;
@@ -50,7 +51,8 @@ export const TextInput = ({
   controlRef,
   disabled,
   hint,
-  id,
+  name,
+  id = name,
   InputLabelProps = {},
   InputProps = {},
   label,
@@ -67,13 +69,13 @@ export const TextInput = ({
     formState: { errors },
     setError
   } = useFormContext();
-  const errorKey = `${id}-error`;
+  const errorKey = `${name}-error`;
 
   const validate = value => {
     if (disabled) {
       return true;
     }
-    const { isValid, errortext } = runValidations({ id, required, validations, value, wasMaybeTouched: !!errors[id] });
+    const { isValid, errortext } = runValidations({ id: name, required, validations, value, wasMaybeTouched: !!errors[name] });
     if (isValid) {
       clearErrors(errorKey);
     } else {
@@ -84,7 +86,7 @@ export const TextInput = ({
 
   return (
     <Controller
-      name={id}
+      name={name}
       control={control}
       rules={{ required: required ? `${label} is required` : false, validate, ...rules }}
       render={({ field: { value, onChange, onBlur, ref }, fieldState: { error } }) => {
@@ -98,7 +100,7 @@ export const TextInput = ({
               autoComplete={autocomplete}
               id={id}
               label={label}
-              name={id}
+              name={name}
               disabled={disabled}
               inputRef={inputRef => {
                 ref(inputRef);

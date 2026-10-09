@@ -38,7 +38,8 @@ const useStyles = makeStyles()(theme => ({
 export type PasswordInputProps = {
   create?: boolean;
   defaultValue?: string;
-  id: string;
+  id?: string;
+  name: string;
   placeholder?: string;
 } & Partial<CommonTextInputProps>;
 
@@ -49,7 +50,8 @@ export const PasswordInput = ({
   create,
   defaultValue,
   disabled,
-  id,
+  name,
+  id = name,
   InputLabelProps = {},
   InputProps = {},
   label,
@@ -62,7 +64,7 @@ export const PasswordInput = ({
   const [visible, setVisible] = useState(false);
   const [strong, setStrong] = useState(false);
   const [warningIcon, setWarningIcon] = useState(false);
-  const [confirmationId] = useState(id.includes('current') ? '' : ['password', 'password_confirmation'].find(thing => thing !== id));
+  const [confirmationId] = useState(name.includes('current') ? '' : ['password', 'password_confirmation'].find(thing => thing !== name));
   const {
     formState: { errors },
     setValue,
@@ -74,14 +76,14 @@ export const PasswordInput = ({
   useEffect(() => {
     confirmationRef.current = confirmation;
   }, [confirmation]);
-  const errorKey = id;
+  const errorKey = name;
 
   const validate = useCallback(
     async (value = '') => {
       if ((!validations && !required) || disabled) {
         return true;
       }
-      let { isValid, errortext } = runValidations({ id, required, validations, value });
+      let { isValid, errortext } = runValidations({ id: name, required, validations, value });
       if (value && confirmationId === 'password' && confirmationRef.current && value !== confirmationRef.current) {
         isValid = false;
         errortext = `Passwords don't match. Please try again.`;
@@ -103,22 +105,22 @@ export const PasswordInput = ({
       setWarningIcon(isWarningIcon);
       return isValid || errortext;
     },
-    [confirmationId, create, disabled, id, required, validations]
+    [confirmationId, create, disabled, name, required, validations]
   );
 
-  const currentValue = getValues(id);
+  const currentValue = getValues(name);
   // Revalidate if mismatch and user change password to match confirm_password
   useEffect(() => {
-    if (errors.password_confirmation && create && id == 'password') {
+    if (errors.password_confirmation && create && name == 'password') {
       trigger('password_confirmation');
     }
-  }, [create, currentValue, errors.password_confirmation, id, trigger]);
+  }, [create, currentValue, errors.password_confirmation, name, trigger]);
 
   const showAsNotched = label && typeof label !== 'string' ? { notched: true } : {};
   return (
     <div className={className}>
       <Controller
-        name={id}
+        name={name}
         control={control}
         rules={{ validate }}
         render={({ field: { value, onChange, onBlur, ref }, fieldState: { error } }) => {
@@ -138,7 +140,7 @@ export const PasswordInput = ({
                 autoComplete={autocomplete}
                 id={id}
                 label={label}
-                name={id}
+                name={name}
                 type={visible ? 'text' : 'password'}
                 defaultValue={defaultValue}
                 placeholder={placeholder}
@@ -147,15 +149,15 @@ export const PasswordInput = ({
                 inputRef={ref}
                 required={required}
                 onChange={({ target: { value } }) => {
-                  setValue(id, value);
+                  setValue(name, value);
                   onChange(value);
                   if (create) {
-                    trigger(id);
+                    trigger(name);
                   }
                 }}
                 onBlur={() => {
-                  if (id === 'password_confirmation') {
-                    trigger(id);
+                  if (name === 'password_confirmation') {
+                    trigger(name);
                   }
                   onBlur();
                 }}

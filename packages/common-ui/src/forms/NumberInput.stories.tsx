@@ -41,7 +41,7 @@ type Story = StoryObj<typeof NumberInput>;
 export const Primary: Story = {
   name: 'NumberInput',
   args: {
-    id: 'retries',
+    name: 'retries',
     label: 'Retries',
     defaultValue: 3,
     min: 0,

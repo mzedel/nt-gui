@@ -788,6 +788,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
       <input
         class="PrivateSwitchBase-input emotion-2"
         data-indeterminate="false"
+        id="testbox"
         name="testbox"
         type="checkbox"
       />

@@ -18,7 +18,7 @@ import type { FormCheckboxProps } from './FormCheckbox';
 import { FormCheckbox } from './FormCheckbox';
 
 const renderCheckbox = (args: FormCheckboxProps, checked = false) => (
-  <Form defaultValues={{ [args.id]: checked }} onSubmit={() => {}}>
+  <Form defaultValues={{ [args.name]: checked }} onSubmit={() => {}}>
     <FormCheckbox {...args} />
   </Form>
 );
@@ -36,7 +36,7 @@ export const Primary: Story = {
   name: 'FormCheckbox',
   render: args => renderCheckbox(args),
   args: {
-    id: 'terms',
+    name: 'terms',
     label: 'I agree to the terms and conditions'
   }
 };
@@ -45,7 +45,7 @@ export const Checked: Story = {
   name: 'Checked',
   render: args => renderCheckbox(args, true),
   args: {
-    id: 'notifications',
+    name: 'notifications',
     label: 'Send me deployment notifications by email'
   }
 };
@@ -63,7 +63,7 @@ export const Disabled: Story = {
   name: 'Disabled',
   render: args => renderCheckbox(args, true),
   args: {
-    id: 'auditlog',
+    name: 'auditlog',
     label: 'Enable audit logging (available in the Enterprise plan)',
     disabled: true
   }
@@ -82,7 +82,7 @@ export const WithSlotProps: Story = {
   name: 'With Slot Props',
   render: args => renderCheckbox(args, true),
   args: {
-    id: 'retry',
+    name: 'retry',
     label: 'Retry failed deployments',
     slotProps: {
       checkbox: { color: 'secondary', size: 'small' },

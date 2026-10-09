@@ -21,8 +21,8 @@ import { TextInput } from './TextInput';
 
 const SampleFormContent = () => (
   <div className="flexbox column" style={{ gap: 20 }}>
-    <TextInput id="name" label="Name" required validations="isLength:3" />
-    <TextInput hint="user@example.com" id="email" label="Email" required type="email" validations="isEmail" />
+    <TextInput name="name" label="Name" required validations="isLength:3" />
+    <TextInput hint="user@example.com" name="email" label="Email" required type="email" validations="isEmail" />
   </div>
 );
 

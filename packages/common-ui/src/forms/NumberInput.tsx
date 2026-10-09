@@ -23,10 +23,11 @@ type NumberInputProps = {
   defaultValue?: number | null;
   disabled?: boolean;
   helperText?: ReactNode;
-  id: string;
+  id?: string;
   label?: ReactNode;
   max?: number;
   min?: number;
+  name: string;
   onBlur?: (value: number | null) => void;
   required?: boolean;
   rules?: RegisterOptions;
@@ -42,7 +43,8 @@ export const NumberInput = ({
   defaultValue,
   disabled,
   helperText,
-  id,
+  name,
+  id = name,
   label,
   max,
   min,
@@ -63,7 +65,7 @@ export const NumberInput = ({
 
   return (
     <Controller
-      name={id}
+      name={name}
       control={control}
       defaultValue={defaultValue}
       rules={mergedRules}
@@ -77,7 +79,7 @@ export const NumberInput = ({
           onValueChange={onChange}
           onBlur={() => {
             onBlur();
-            onBlurExternal?.((getValues(id) as number | null) ?? null);
+            onBlurExternal?.((getValues(name) as number | null) ?? null);
           }}
           min={min}
           max={max}

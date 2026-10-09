@@ -18,7 +18,7 @@ import type { TextInputProps } from './TextInput';
 import { TextInput } from './TextInput';
 
 const renderInput = (args: TextInputProps, initialValue = '') => (
-  <Form defaultValues={{ [args.id]: initialValue }} onSubmit={() => {}}>
+  <Form defaultValues={{ [args.name]: initialValue }} onSubmit={() => {}}>
     <TextInput {...args} />
   </Form>
 );
@@ -38,7 +38,7 @@ export const Primary: Story = {
   args: {
     autocomplete: 'email',
     hint: 'user@example.com',
-    id: 'email',
+    name: 'email',
     label: 'Email',
     required: true,
     type: 'email',
@@ -60,7 +60,7 @@ export const WithValue: Story = {
   render: args => renderInput(args, 'production gateway'),
   args: {
     hint: 'e.g. production gateway',
-    id: 'device_name',
+    name: 'device_name',
     label: 'Device name',
     validations: 'isLength:3,trim'
   }
@@ -70,7 +70,7 @@ export const WithRules: Story = {
   name: 'With Additional Rules',
   render: args => renderInput(args),
   args: {
-    id: 'device_name',
+    name: 'device_name',
     label: 'Device name',
     required: true,
     rules: { maxLength: { message: 'The name may not exceed 32 characters', value: 32 } }
@@ -82,7 +82,7 @@ export const Disabled: Story = {
   render: args => renderInput(args, 'immutable-value'),
   args: {
     disabled: true,
-    id: 'tenant_token',
+    name: 'tenant_token',
     label: 'Tenant token'
   }
 };

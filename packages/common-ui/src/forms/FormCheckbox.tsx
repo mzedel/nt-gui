@@ -26,8 +26,9 @@ export type FormCheckboxSlotProps = {
 export interface FormCheckboxProps extends Pick<CheckboxProps, 'className' | 'disabled' | 'style'> {
   control?: Control<FieldValues>;
   handleClick?: MouseEventHandler<HTMLButtonElement>;
-  id: string;
+  id?: string;
   label: ReactNode;
+  name: string;
   required?: boolean;
   slotProps?: FormCheckboxSlotProps;
 }
@@ -38,7 +39,8 @@ export const FormCheckbox = ({
   className,
   control,
   disabled,
-  id,
+  name,
+  id = name,
   handleClick,
   style,
   label,
@@ -46,7 +48,7 @@ export const FormCheckbox = ({
   slotProps: { label: labelProps, checkbox: checkboxProps } = emptySlotProps
 }: FormCheckboxProps) => (
   <Controller
-    name={id}
+    name={name}
     rules={{ required }}
     control={control}
     render={({ field: { value = false, onChange } }) => (
@@ -54,7 +56,8 @@ export const FormCheckbox = ({
         className={className}
         control={
           <Checkbox
-            name={id}
+            id={id}
+            name={name}
             onClick={handleClick}
             disabled={disabled}
             checked={value}

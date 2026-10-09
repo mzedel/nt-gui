@@ -25,9 +25,9 @@ describe('Form Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(
       <Form onSubmit={vi.fn()} showButtons submitLabel="submit">
-        <FormCheckbox id="testbox" label="testbox" />
-        <PasswordInput id="password" create />
-        <TextInput id="textbox" />
+        <FormCheckbox name="testbox" label="testbox" />
+        <PasswordInput name="password" create />
+        <TextInput name="textbox" />
       </Form>
     );
     expect(await screen.findByText('submit')).toBeInTheDocument();

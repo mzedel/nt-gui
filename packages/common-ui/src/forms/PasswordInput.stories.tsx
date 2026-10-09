@@ -35,7 +35,7 @@ type Story = StoryObj<typeof PasswordInput>;
 export const Primary: Story = {
   name: 'PasswordInput',
   args: {
-    id: 'password',
+    name: 'password',
     label: 'Password',
     placeholder: 'Enter your password',
     disabled: false,
@@ -60,7 +60,7 @@ export const WithConfirmation: Story = {
   render: args => (
     <div className="flexbox column" style={{ gap: 15 }}>
       <PasswordInput {...args} />
-      <PasswordInput id="password_confirmation" label="Confirm password" required validations="isLength:8" />
+      <PasswordInput name="password_confirmation" label="Confirm password" required validations="isLength:8" />
     </div>
   ),
   args: {
