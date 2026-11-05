@@ -213,6 +213,8 @@ release:
       --config-file=release-please-config.json
       --manifest-file=.release-please-manifest.json
     - |
+      # keep publishing the remaining packages if one fails, but fail the job afterwards
+      FAILED_PACKAGES="";
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
         cd $component;
         PKG_NAME=$(jq -r '.name' package.json);
@@ -221,10 +223,17 @@ release:
           echo "INFO - ${PKG_NAME}@${PKG_VERSION} already published, skipping";
         else
           echo "INFO - publishing ${PKG_NAME}@${PKG_VERSION}";
-          npm publish --provenance=false --loglevel verbose;
+          npm publish --provenance=false --loglevel verbose || {
+            echo "ERROR - publishing ${PKG_NAME}@${PKG_VERSION} failed";
+            FAILED_PACKAGES="${FAILED_PACKAGES} ${PKG_NAME}@${PKG_VERSION}";
+          };
         fi
         cd ../..;
       done
+      if [[ -n "$FAILED_PACKAGES" ]]; then
+        echo "ERROR - failed to publish:${FAILED_PACKAGES}";
+        exit 1;
+      fi
 
 pages:
   stage: release
